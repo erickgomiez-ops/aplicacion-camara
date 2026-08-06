@@ -138,20 +138,32 @@ class JarvisAssistant:
                 continue
             if time.monotonic() - self._last_activation < self.config.wake_cooldown_seconds:
                 continue
-            if self.detector.detected(chunk):
-                self._handle_activation()
+            keyword = self.detector.detected_keyword(chunk)
+            if keyword:
+                self._handle_activation(keyword)
 
-    def _handle_activation(self) -> None:
+    def _handle_activation(self, activation_keyword: str = "") -> None:
         if not self._interaction_lock.acquire(blocking=False):
             return
         try:
             self._last_activation = time.monotonic()
             self._set_state(AssistantState.CAPTURING_COMMAND)
             play_chime(self.chimes["wake"])
+            if activation_keyword in {"holaa", "olaa"}:
+                self._logger.info("Saludo directo detectado")
+                self._execute_decision(self.router.handle("hola"))
+                return
+            self._logger.info("Capturando orden de voz")
             capture = self.microphone.capture_utterance(
                 max_seconds=self.config.command_max_seconds,
                 silence_seconds=self.config.command_silence_seconds,
                 minimum_rms=self.config.microphone_rms_threshold,
+            )
+            self._logger.info(
+                "Captura terminada: speech=%s, duracion=%.2fs, threshold=%.1f",
+                capture.speech_detected,
+                capture.duration_seconds,
+                capture.threshold,
             )
             if not capture.speech_detected:
                 self._speak("No escuché una orden. Inténtelo de nuevo.")
@@ -159,10 +171,12 @@ class JarvisAssistant:
 
             self._set_state(AssistantState.THINKING)
             text = self.transcriber.transcribe(capture.audio)
+            self._logger.info("Orden transcrita: %r", text)
             if not text:
                 self._speak("No pude entender la orden.")
                 return
             decision = self.router.handle(text)
+            self._logger.info("Decision local: action=%s, spoken=%r", decision.action.value, decision.spoken)
             self._execute_decision(decision)
         except Exception:
             self._logger.exception("Falló el procesamiento de una orden de voz")

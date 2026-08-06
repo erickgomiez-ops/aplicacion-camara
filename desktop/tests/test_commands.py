@@ -12,6 +12,18 @@ def test_greeting_is_local() -> None:
     assert decision.spoken
 
 
+def test_greeting_accepts_assistant_name_first() -> None:
+    decision = CommandRouter().handle("Jarvis hola")
+    assert decision.action is ActionKind.NONE
+    assert decision.spoken
+
+
+def test_greeting_accepts_common_name_transcription_variants() -> None:
+    decision = CommandRouter().handle("Jervis buenas")
+    assert decision.action is ActionKind.NONE
+    assert decision.spoken
+
+
 def test_shutdown_requires_confirmation() -> None:
     router = CommandRouter()
     request = router.handle("apaga la laptop", now=10)

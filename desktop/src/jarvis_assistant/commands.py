@@ -28,6 +28,8 @@ class CommandRouter:
         current_time = now if now is not None else time.monotonic()
         original = text.strip()
         command = normalize(original)
+        command = re.sub(r"^(jarvis|jervis|yarvis)\s+", "", command).strip()
+        command = re.sub(r"\s+(jarvis|jervis|yarvis)$", "", command).strip()
 
         if not command:
             return CommandDecision("No alcancé a escuchar una orden.")

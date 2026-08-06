@@ -11,6 +11,8 @@ PRONUNCIATIONS = {
     "jarvish": "HH AA R V IY S",
     "jarvisj": "JH AA R V AH S",
     "jarvisy": "Y AA R V IY S",
+    "holaa": "HH AA L AA",
+    "olaa": "AA L AA",
 }
 
 
@@ -41,15 +43,21 @@ class WakeWordDetector:
         self._decoder.add_kws("jarvis", str(keyword_file))
         self._decoder.activate_search("jarvis")
         self._decoder.start_utt()
+        self.last_hypothesis = ""
 
     def detected(self, chunk: np.ndarray) -> bool:
+        return self.detected_keyword(chunk) is not None
+
+    def detected_keyword(self, chunk: np.ndarray) -> str | None:
         self._decoder.process_raw(chunk.astype(np.int16, copy=False).tobytes(), False, False)
         hypothesis = self._decoder.hyp()
         if hypothesis is None:
-            return False
+            return None
         self._logger.info("Palabra de activación detectada")
+        self.last_hypothesis = hypothesis.hypstr or ""
+        self._logger.info("Hipotesis de activacion: %s", self.last_hypothesis)
         self.reset()
-        return True
+        return self.last_hypothesis
 
     def score(self, chunk: np.ndarray) -> float:
         return 1.0 if self.detected(chunk) else 0.0
