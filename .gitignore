@@ -1,6 +1,13 @@
 node_modules
 dist
 .vite
+.venv*
+desktop/.venv*
+desktop/codex-cli/node_modules
+__pycache__
+.pytest_cache
+*.py[cod]
+*.egg-info/
 .env
 .env.*
 !.env.example

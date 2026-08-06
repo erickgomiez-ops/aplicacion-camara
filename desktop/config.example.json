@@ -1,0 +1,22 @@
+{
+  "assistant_name": "Jarvis",
+  "codex_confirm_tasks": true,
+  "codex_enabled": true,
+  "codex_timeout_seconds": 1800,
+  "codex_workspace": "C:\\ruta\\a\\tu\\proyecto",
+  "command_max_seconds": 20.0,
+  "command_silence_seconds": 1.2,
+  "input_device": null,
+  "language": "es",
+  "microphone_rms_threshold": 420,
+  "screen_analysis_enabled": true,
+  "speak_codex_max_chars": 520,
+  "start_with_windows": true,
+  "voice_name_contains": "Raul",
+  "voice_rate": 172,
+  "voice_volume": 0.95,
+  "wake_cooldown_seconds": 2.5,
+  "wake_keyword_threshold": 1e-20,
+  "whisper_compute_type": "int8",
+  "whisper_model": "base"
+}

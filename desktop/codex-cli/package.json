@@ -1,0 +1,9 @@
+{
+  "name": "jarvis-codex-cli",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Codex CLI local y fijado para JARVIS Local",
+  "dependencies": {
+    "@openai/codex": "0.146.1"
+  }
+}
